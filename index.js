@@ -1,34 +1,56 @@
-
-
-const adventurer = {
-    name: "Robin",
-    health: 10,
-    inventory: ["sword", "potion", "artifact"],
-    companion: {
-        name: "Leo",
-        type: "Cat",
-        subCompanion: { 
-            name: 'Frank',
-            type: 'flea',
-            inventory: ['hat', 'sunglasses'] 
-        }
-    },
-    roll (mod = 0) {
-        const result = Math.floor(Math.random() * 20) + 1 + mod;
-        console.log(`${this.name} rolled a ${result}.`)
-        }
-}
-for (const item of adventurer.inventory) {
-    console.log(item);
-}
-adventurer.roll()   
 class Character {
-    constructor (name) {
+    static MAX_HEALTH = 100;
+  
+    constructor(name) {
       this.name = name;
-      this.health = 100;
+      this.health = Character.MAX_HEALTH;
       this.inventory = [];
     }
   }
+  
+  class Adventurer extends Character {
+    static Roles = ['Fighter', 'Healer', 'Wizard'];
+  
+    constructor(name, role) {
+      super(name);
+      if (!Adventurer.Roles.includes(role)) {
+        throw new Error('Invalid role');
+      }
+      this.role = role;
+      this.inventory.push("bedroll", "50 gold coins");
+    }
+  
+    scout() {
+      const result = Math.floor(Math.random() * 20) + 1;
+      console.log(`${this.name} rolled a ${result}.`);
+      return result;
+    }
+  
+    duel(opponent) {
+      while (this.health > 50 && opponent.health > 50) {
+        const thisRoll = this.scout();
+        const opponentRoll = opponent.scout();
+  
+        console.log(`${this.name} rolled a ${thisRoll}, ${opponent.name} rolled a ${opponentRoll}.`);
+  
+        if (thisRoll > opponentRoll) {
+          opponent.health -= 1;
+        } else {
+          this.health -= 1;
+        }
+  
+        console.log(`Current health - ${this.name}: ${this.health}, ${opponent.name}: ${opponent.health}.`);
+      }
+  
+      if (this.health > 50) {
+        console.log(`${this.name} is the winner of the duel!`);
+      } else {
+        console.log(`${opponent.name} is the winner of the duel!`);
+      }
+    }
+  }
+  
+  // Example usage
   const robin = new Character("Robin");
   robin.inventory = ["sword", "potion", "artifact"];
   robin.companion = new Character("Leo");
@@ -36,30 +58,9 @@ class Character {
   robin.companion.companion = new Character("Frank");
   robin.companion.companion.type = "Flea";
   robin.companion.companion.inventory = ["small hat", "sunglasses"];
-
-
-  class Adventurer extends Character {
-    constructor (name, role) {
-      super(name);
-      // Adventurers have specialized roles.
-      this.role = role;
-      // Every adventurer starts with a bed and 50 gold coins.
-      this.inventory.push("bedroll", "50 gold coins");
-    }
-    // Adventurers have the ability to scout ahead of them.
-    scout () {
-      console.log(`${this.name} is scouting ahead...`);
-      super.roll();
-    }
-  }
-  class companion {
-    constructor(name, type) {
-        this.name = name
-        this.type = type
-        this.inventory = []
-    }
-    SpecialAction(){console.log(`${this.name} is performing a special action!`)
-
-    }
-  }
-  const Robin = new Adventurer("Robin", "Warrior")
+  
+  const adventurer1 = new Adventurer("Fighter1", "Fighter");
+  const adventurer2 = new Adventurer("Healer1", "Healer");
+  
+  adventurer1.duel(adventurer2);
+  
